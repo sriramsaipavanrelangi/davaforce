@@ -1,0 +1,4 @@
+interface:
+  display_name: "Common UI Screen Generator"
+  short_description: "Generate UI screens from requirements and design docs"
+  default_prompt: "Use $common-ui-screen-generator to create consistent UI screens from requirements.md and design.md."

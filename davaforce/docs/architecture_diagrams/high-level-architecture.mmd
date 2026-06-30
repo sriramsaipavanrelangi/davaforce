@@ -1,0 +1,73 @@
+flowchart LR
+    planner["Planner / Delivery Leader / Approver"]
+    workspace["Next.js Frontend<br/>Dashboard, Opportunity Workspace,<br/>Recommendations, EWA Review"]
+
+    subgraph platform["DavaForce"]
+        direction LR
+
+        subgraph runtime["Application Runtime"]
+            direction LR
+            api["Next.js API Routes<br/>Server Actions"]
+            memoryMgr["Session Memory Manager"]
+            orchestrator["Mastra Workflow Orchestrator"]
+            oa["Opportunity Assessment<br/>Agent"]
+            rs["Resource Supply<br/>Agent"]
+            tb["Team Builder<br/>Agent"]
+            ri["Risk & Insights<br/>Agent"]
+            ad["Approval & Decision<br/>Agent"]
+            engine["DavaForce Engine<br/>search, scoring, risk logic"]
+        end
+
+        subgraph data["Operational Data Layer"]
+            direction TB
+            prisma["Prisma ORM"]
+            appDb[("Normalized Application DB<br/>SQLite for MVP<br/>PostgreSQL later")]
+            sessionDb[("Sessions, SessionMemory,<br/>Recommendations, AgentRuns")]
+        end
+
+        subgraph ingestion["Offline Ingestion"]
+            direction LR
+            excel["Excel Workforce Dataset"]
+            etl["Import, Cleaning, Normalization<br/>xlsx ETL scripts"]
+            rawTables[("Raw Import Tables")]
+        end
+    end
+
+    planner --> workspace
+    workspace --> api
+    api --> memoryMgr
+    api --> orchestrator
+    memoryMgr <--> sessionDb
+
+    orchestrator --> oa
+    orchestrator --> rs
+    oa --> tb
+    rs --> tb
+    tb --> ri
+    ri --> ad
+    ad --> workspace
+
+    oa --> engine
+    rs --> engine
+    tb --> engine
+    ri --> engine
+    ad --> engine
+    engine --> prisma
+    prisma --> appDb
+    prisma --> sessionDb
+
+    excel --> etl --> rawTables --> appDb
+
+    classDef actor fill:#fff7e6,stroke:#c57a00,color:#2b1d00,stroke-width:1px;
+    classDef frontend fill:#eef5ff,stroke:#356ae6,color:#10213a,stroke-width:1px;
+    classDef control fill:#f4f0ff,stroke:#7b61c9,color:#22173a,stroke-width:1px;
+    classDef agent fill:#e8fbf3,stroke:#178a5d,color:#0f2f20,stroke-width:1px;
+    classDef tool fill:#fff4e8,stroke:#c96b20,color:#402100,stroke-width:1px;
+    classDef data fill:#f2f4f7,stroke:#667085,color:#1d2939,stroke-width:1px;
+
+    class planner actor;
+    class workspace frontend;
+    class api,memoryMgr,orchestrator control;
+    class oa,rs,tb,ri,ad agent;
+    class engine tool;
+    class prisma,appDb,sessionDb,excel,etl,rawTables data;

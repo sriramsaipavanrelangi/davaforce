@@ -1,0 +1,53 @@
+flowchart TD
+    caller["Router / API / Planner / Approver<br/>approval package or EWA review request"]
+    agent["Approval & Decision Agent<br/>Mastra Agent<br/>approvalDecisionAgent"]
+    tool["approvalDecisionTool<br/>buildApprovalDecision()"]
+
+    subgraph upstream["Required Upstream Evidence"]
+        direction TB
+        source["resolveWorkforceDataSource()"]
+        teamBuilder["buildTeamOptions()<br/>selected staffing options"]
+        riskInsights["buildRiskInsights()<br/>option and role risk analysis"]
+        ewaQuery["queryEwaRequests()<br/>selected opportunity EWA records"]
+        db[("Normalized Workforce SQLite DB<br/>EwaRequest + planning tables")]
+    end
+
+    subgraph logic["Approval Packaging Logic"]
+        direction TB
+        selectOption["Select Option<br/>preferred option or lowest-risk analyzed option"]
+        compareEwa["Match EWA Requests<br/>roleId + personId assignments"]
+        blockers["Detect Blockers<br/>blocked EWA status,<br/>blocking reason,<br/>approval required,<br/>missing EWA records"]
+        checklist["Build Approval Checklist<br/>opportunity, team option,<br/>FTE coverage, risk level,<br/>EWA readiness"]
+        decision["Decision State<br/>ready for human review<br/>or planner review required"]
+        package["Approval Package<br/>audience, prompt,<br/>recommended decision,<br/>conditions, next actions"]
+        guardrail["Guardrail<br/>humanApprovalRequired is true;<br/>no booking or EWA approval executed"]
+    end
+
+    outputJson["ApprovalDecisionOutput JSON<br/>selectedOption, riskSummary,<br/>approvalChecklist, ewaSummary,<br/>approvalPackage, nextActions, evidence"]
+    downstream["Downstream Consumers<br/>Router final response,<br/>EWA review UI, approver package"]
+
+    caller --> agent --> tool --> source --> db
+    tool --> teamBuilder --> db
+    tool --> riskInsights --> db
+    tool --> ewaQuery --> db
+    teamBuilder --> selectOption
+    riskInsights --> selectOption
+    ewaQuery --> compareEwa --> blockers --> checklist --> decision --> package --> guardrail --> outputJson
+    selectOption --> compareEwa
+    outputJson --> downstream
+
+    classDef actor fill:#fff7e6,stroke:#c57a00,color:#2b1d00,stroke-width:1px;
+    classDef agentNode fill:#e8fbf3,stroke:#178a5d,color:#0f2f20,stroke-width:1px;
+    classDef toolNode fill:#fff4e8,stroke:#c96b20,color:#402100,stroke-width:1px;
+    classDef control fill:#f4f0ff,stroke:#7b61c9,color:#22173a,stroke-width:1px;
+    classDef data fill:#f2f4f7,stroke:#667085,color:#1d2939,stroke-width:1px;
+    classDef outputNode fill:#eef5ff,stroke:#356ae6,color:#10213a,stroke-width:1px;
+    classDef guardrailNode fill:#fff8d6,stroke:#b58b00,color:#3a2e00,stroke-width:1px;
+
+    class caller actor;
+    class agent agentNode;
+    class tool,teamBuilder,riskInsights toolNode;
+    class source,ewaQuery,selectOption,compareEwa,blockers,checklist,decision,package control;
+    class guardrail guardrailNode;
+    class db data;
+    class outputJson,downstream outputNode;

@@ -1,0 +1,62 @@
+flowchart TD
+    caller["Router / API / Planner<br/>skills, roleId, opportunityId,<br/>filters, availability window"]
+    agent["Resource Supply Agent<br/>Mastra Agent<br/>resourceSupplyAgent"]
+    tool["resourceSupplyTool<br/>findResourceSupply()"]
+
+    subgraph access["Data Access"]
+        direction LR
+        resolver["resolveWorkforceDataSource()"]
+        sqlite["Read-only DatabaseSync"]
+        tables[("Person<br/>PersonAvailabilitySnapshot<br/>SupplyRecord<br/>OpportunityCandidateOverlay<br/>AvailabilityWeek<br/>PersonSkillEvidence<br/>BenchMovementWeek<br/>ScenarioTarget")]
+    end
+
+    subgraph logic["Deterministic Supply Logic"]
+        direction TB
+        signals["Extract Query Signals<br/>skills, locations,<br/>disciplines, window"]
+        roleCtx["Role Context<br/>opportunity role filters,<br/>minimum FTE, domain,<br/>grade, location"]
+        availability["Weekly Availability Map<br/>target date from asOfDate + window"]
+        skills["Skills by Person Map"]
+        candidateQuery["Candidate Query<br/>availability, supply, overlay evidence"]
+        scoring["Score Candidates<br/>skill match, overlay score,<br/>available FTE"]
+        filters["Apply Strict Filters<br/>availability, skills or overlay,<br/>location, domain, grade, discipline"]
+        nearMatches["Near Matches<br/>returned when strict matches are empty"]
+        capacity["Capacity By Window<br/>current, 0-30, 31-60, 61-90, partial"]
+        movement["Bench Movement<br/>weekly trend"]
+        targets["Scenario Targets<br/>nearest movement status"]
+        diagnostics["Filter Diagnostics and Risks"]
+    end
+
+    outputJson["ResourceSupplyOutput JSON<br/>filters, summary, capacityByWindow,<br/>benchMovement, scenarioTargets,<br/>candidates, nearMatches,<br/>diagnostics, risks, evidence"]
+    downstream["Downstream Consumers<br/>Router role supply,<br/>Team Builder role-wise candidates"]
+
+    caller --> agent --> tool --> resolver --> sqlite --> tables
+    tool --> signals --> filters
+    tool --> roleCtx --> filters
+    sqlite --> availability --> scoring
+    sqlite --> skills --> scoring
+    sqlite --> candidateQuery --> scoring --> filters
+    filters --> nearMatches
+    filters --> diagnostics
+    sqlite --> capacity
+    sqlite --> movement --> targets
+    sqlite --> targets
+    nearMatches --> outputJson
+    diagnostics --> outputJson
+    capacity --> outputJson
+    movement --> outputJson
+    targets --> outputJson
+    outputJson --> downstream
+
+    classDef actor fill:#fff7e6,stroke:#c57a00,color:#2b1d00,stroke-width:1px;
+    classDef agentNode fill:#e8fbf3,stroke:#178a5d,color:#0f2f20,stroke-width:1px;
+    classDef toolNode fill:#fff4e8,stroke:#c96b20,color:#402100,stroke-width:1px;
+    classDef control fill:#f4f0ff,stroke:#7b61c9,color:#22173a,stroke-width:1px;
+    classDef data fill:#f2f4f7,stroke:#667085,color:#1d2939,stroke-width:1px;
+    classDef outputNode fill:#eef5ff,stroke:#356ae6,color:#10213a,stroke-width:1px;
+
+    class caller actor;
+    class agent agentNode;
+    class tool toolNode;
+    class resolver,signals,roleCtx,availability,skills,candidateQuery,scoring,filters,nearMatches,capacity,movement,targets,diagnostics control;
+    class sqlite,tables data;
+    class outputJson,downstream outputNode;

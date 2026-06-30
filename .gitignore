@@ -1,0 +1,76 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+
+# Local editor / OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Python build and test outputs
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Generated local outputs
+output/
+outputs/
+
+# Generated database artifacts
+*.sqlite
+*.sqlite3
+*.db
+
+# Generated workbook samples
+davaforce/backend/db/sample_data/*_sample.xlsx
+db/sample_data/*_sample.xlsx
+
+# Local Codex/agent runtime state
+.agents/
+.codex/
+
+# Node / Next local artifacts
+node_modules/
+.next/
+.mastra/
+.next-dev.*
+.next-start.*
+davaforce/node_modules/
+davaforce/.next/
+davaforce/.mastra/
+davaforce/backend/data/
+davaforce/data/
+davaforce/backend/reports/*.tmp
+davaforce/temp_*.db
+davaforce/frontend/dist/
+davaforce/.next-dev.*
+davaforce/.next-start.*
+.open-next/
+.wrangler/

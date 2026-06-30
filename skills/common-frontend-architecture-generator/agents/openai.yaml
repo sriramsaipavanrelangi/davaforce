@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Architecture Generator"
+  short_description: "Generate frontend-architecture.md from project docs"
+  default_prompt: "Use $common-frontend-architecture-generator to create frontend-architecture.md."

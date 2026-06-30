@@ -1,0 +1,4 @@
+interface:
+  display_name: "Common Design Generator"
+  short_description: "Generate structured design.md documents"
+  default_prompt: "Use $common-design-generator to create a design.md for this project."

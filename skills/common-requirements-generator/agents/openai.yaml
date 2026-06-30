@@ -1,0 +1,4 @@
+interface:
+  display_name: "Common Requirements Generator"
+  short_description: "Generate structured requirements.md documents"
+  default_prompt: "Use $common-requirements-generator to create a requirements.md for this project."

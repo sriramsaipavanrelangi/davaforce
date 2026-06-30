@@ -1,0 +1,83 @@
+flowchart LR
+    caller["Frontend / API Route<br/>userQuestion + runtime inputs"]
+    agent["Workforce Router Agent<br/>Mastra Agent<br/>workforceRouterAgent"]
+    tool["workforceRouterTool<br/>routeWorkforceQuestion()"]
+
+    subgraph routing["Routing Core"]
+        direction TB
+        classify["Classify Intent<br/>general, clarification, blocked,<br/>opportunity, supply, team, risk, approval"]
+        contextGate["Context Gate<br/>datasetId or dbPath required<br/>for DB-backed routes"]
+        guardrails["Output Guardrails<br/>no unsafe actions,<br/>no private unsupported fields,<br/>no invented evidence"]
+        plan["Execution Plan<br/>plannedAgentPath,<br/>agentsToRun,<br/>skippedAgents,<br/>dependencies"]
+    end
+
+    subgraph terminal["Non-DB Outcomes"]
+        direction TB
+        general["General Message<br/>no_db_required"]
+        blocked["Blocked Response<br/>unsafe or out of scope"]
+        clarification["Clarification Response<br/>low-confidence intent"]
+        needsContext["Needs Context<br/>request datasetId or dbPath"]
+    end
+
+    subgraph specialist["Deterministic Specialist Functions"]
+        direction TB
+        oa["assessOpportunity()<br/>Opportunity Assessment"]
+        rs["findResourceSupply()<br/>Resource Supply"]
+        rsRoles["findResourceSupply()<br/>per assessed role"]
+        tb["buildTeamOptions()<br/>Team Builder"]
+        ri["buildRiskInsights()<br/>Risk & Insights"]
+        ad["buildApprovalDecision()<br/>Approval & Decision"]
+    end
+
+    outputJson["WorkforceRouterOutput JSON<br/>route + produced sections + message + evidence"]
+    db[("Normalized Workforce SQLite DB<br/>resolved from datasetId or dbPath")]
+
+    caller --> agent --> tool --> classify
+    classify --> contextGate --> guardrails --> plan
+
+    classify -->|general| general
+    classify -->|blocked| blocked
+    classify -->|clarification| clarification
+    contextGate -->|missing data source| needsContext
+
+    plan -->|opportunity_assessment| oa
+    plan -->|resource_supply| rs
+    plan -->|team_builder and downstream| oa
+    oa -->|roles| rsRoles
+    rsRoles --> tb
+    tb --> ri
+    ri --> ad
+
+    oa --> db
+    rs --> db
+    rsRoles --> db
+    tb --> db
+    ri --> db
+    ad --> db
+
+    general --> outputJson
+    blocked --> outputJson
+    clarification --> outputJson
+    needsContext --> outputJson
+    oa --> outputJson
+    rs --> outputJson
+    rsRoles --> outputJson
+    tb --> outputJson
+    ri --> outputJson
+    ad --> outputJson
+
+    classDef actor fill:#fff7e6,stroke:#c57a00,color:#2b1d00,stroke-width:1px;
+    classDef agentNode fill:#e8fbf3,stroke:#178a5d,color:#0f2f20,stroke-width:1px;
+    classDef toolNode fill:#fff4e8,stroke:#c96b20,color:#402100,stroke-width:1px;
+    classDef control fill:#f4f0ff,stroke:#7b61c9,color:#22173a,stroke-width:1px;
+    classDef data fill:#f2f4f7,stroke:#667085,color:#1d2939,stroke-width:1px;
+    classDef outputNode fill:#eef5ff,stroke:#356ae6,color:#10213a,stroke-width:1px;
+    classDef guardrailNode fill:#fff8d6,stroke:#b58b00,color:#3a2e00,stroke-width:1px;
+
+    class caller actor;
+    class agent agentNode;
+    class tool,oa,rs,rsRoles,tb,ri,ad toolNode;
+    class classify,contextGate,plan control;
+    class guardrails,general,blocked,clarification,needsContext guardrailNode;
+    class db data;
+    class outputJson outputNode;

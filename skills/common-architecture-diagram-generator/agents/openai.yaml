@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Diagram Generator"
+  short_description: "Generate high and low level architecture PNGs"
+  default_prompt: "Use $common-architecture-diagram-generator to create architecture diagrams."

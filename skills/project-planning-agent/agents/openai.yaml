@@ -1,0 +1,5 @@
+interface:
+  display_name: "Project Planning Agent"
+  short_description: "Plan projects through requirements, design, and UI screens"
+  default_prompt: "Use $project-planning-agent for this project."
+

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Backend Architecture Generator"
+  short_description: "Generate backend-architecture.md from project docs"
+  default_prompt: "Use $common-backend-architecture-generator to create backend-architecture.md."

@@ -1,0 +1,46 @@
+flowchart TD
+    caller["Router / API / Planner<br/>query, opportunityId,<br/>datasetId or dbPath"]
+    agent["Opportunity Assessment Agent<br/>Mastra Agent<br/>opportunityAssessmentAgent"]
+    tool["opportunityAssessmentTool<br/>assessOpportunity()"]
+
+    subgraph access["Data Access"]
+        direction LR
+        resolver["resolveWorkforceDataSource()"]
+        sqlite["Read-only DatabaseSync"]
+        tables[("Opportunity<br/>OpportunityRole<br/>SkillCatalog<br/>Person")]
+    end
+
+    subgraph logic["Deterministic Assessment Logic"]
+        direction TB
+        select["Select Opportunity<br/>explicit id, delivery risk,<br/>priority, query match,<br/>highest probability fallback"]
+        roles["Load Opportunity Roles<br/>priority, start date, FTE,<br/>grade, skills, location"]
+        signals["Extract Query Signals<br/>skills, locations,<br/>availability window,<br/>role hints"]
+        normalize["Normalize Requirements<br/>roles, skills, grades,<br/>locations, domain,<br/>start date, total FTE"]
+        prioritize["Prioritize Roles<br/>priority order and sequencing"]
+        missing["Missing Field Check<br/>opportunity, roles,<br/>skills, start date"]
+    end
+
+    outputJson["OpportunityAssessmentOutput JSON<br/>selectionDiagnostics, opportunity,<br/>roles, normalizedRequirements,<br/>rolePrioritization, evidence"]
+    downstream["Downstream Consumers<br/>Router, Team Builder,<br/>Resource Supply by role,<br/>Risk and Approval packages"]
+
+    caller --> agent --> tool --> resolver --> sqlite --> tables
+    tool --> select --> roles --> normalize --> prioritize --> missing --> outputJson
+    sqlite --> select
+    sqlite --> roles
+    sqlite --> signals
+    signals --> normalize
+    outputJson --> downstream
+
+    classDef actor fill:#fff7e6,stroke:#c57a00,color:#2b1d00,stroke-width:1px;
+    classDef agentNode fill:#e8fbf3,stroke:#178a5d,color:#0f2f20,stroke-width:1px;
+    classDef toolNode fill:#fff4e8,stroke:#c96b20,color:#402100,stroke-width:1px;
+    classDef control fill:#f4f0ff,stroke:#7b61c9,color:#22173a,stroke-width:1px;
+    classDef data fill:#f2f4f7,stroke:#667085,color:#1d2939,stroke-width:1px;
+    classDef outputNode fill:#eef5ff,stroke:#356ae6,color:#10213a,stroke-width:1px;
+
+    class caller actor;
+    class agent agentNode;
+    class tool toolNode;
+    class resolver,select,roles,signals,normalize,prioritize,missing control;
+    class sqlite,tables data;
+    class outputJson,downstream outputNode;

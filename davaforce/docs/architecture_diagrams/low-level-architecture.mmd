@@ -1,0 +1,121 @@
+flowchart TD
+    planner["Planner / Delivery Manager<br/>persona, opportunity, follow-up question"]
+    workspace["Planning Workspace<br/>opportunity intake, candidate review,<br/>recommendations, EWA panel"]
+    api["API Route / Server Action"]
+    contextAsm["Context Assembler"]
+    memoryLookup["Session Memory Lookup"]
+    changeDetector["Change Detector"]
+    executionPolicy["Selective Execution Policy<br/>run only agents affected by this turn"]
+    orchestrator["Mastra Workflow Orchestrator"]
+    memoryUpdate["Memory Update"]
+    response["Recommendation Package<br/>team options, evidence, risks,<br/>EWA status, next actions"]
+    runtimeNote["Runtime reads normalized tables only;<br/>agents never read Excel directly"]
+
+    planner --> workspace --> api --> contextAsm --> memoryLookup --> changeDetector --> executionPolicy --> orchestrator
+
+    subgraph memory["Conversation and Runtime Memory"]
+        direction LR
+        sessionStore[("Session Memory<br/>active opportunity, filters,<br/>persona, previous responses")]
+        agentStore[("Agent Memory<br/>requirements, shortlists,<br/>team options, explanations")]
+        runStore[("Recommendations and AgentRuns<br/>audit trail, replay, approval state")]
+    end
+
+    sessionStore --> memoryLookup
+    agentStore --> memoryLookup
+    orchestrator --> memoryUpdate
+    memoryUpdate --> sessionStore
+    memoryUpdate --> agentStore
+    memoryUpdate --> runStore
+
+    subgraph agents["Agent Execution Graph"]
+        direction LR
+        oa["1. Opportunity Assessment Agent<br/>extract roles, skills, grade,<br/>location, timeline, FTE"]
+        rs["2. Resource Supply Agent<br/>bench, partial capacity,<br/>30/60/90-day supply"]
+        tb["3. Team Builder Agent<br/>best fit, fastest available,<br/>balanced team options"]
+        ri["4. Risk & Insights Agent<br/>confidence, gaps, bench impact,<br/>availability risk, next actions"]
+        ad["5. Approval & Decision Agent<br/>EWA summary, approval package,<br/>final recommendation"]
+    end
+
+    orchestrator -->|parallel start| oa
+    orchestrator -->|parallel start| rs
+    oa -->|requirements| tb
+    rs -->|ranked supply| tb
+    tb -->|team options| ri
+    oa -->|role context| ad
+    rs -->|supply evidence| ad
+    tb -->|staffing options| ad
+    ri -->|risks and confidence| ad
+    ad --> response --> workspace
+
+    subgraph tools["Deterministic DavaForce Engine"]
+        direction TB
+        availability["availabilitySearch()"]
+        capacity["capacityCalculator30_60_90()"]
+        forecast["forecastAvailability()"]
+        skills["skillsMatcher()"]
+        scoring["candidateScorer()"]
+        teamBuild["teamOptionBuilder()"]
+        risk["riskAnalyzer()"]
+        explain["generateExplanation()"]
+        ewa["ewaRecommendationBuilder()"]
+    end
+
+    rs --> availability
+    rs --> capacity
+    rs --> forecast
+    tb --> skills
+    tb --> scoring
+    tb --> teamBuild
+    ri --> risk
+    ri --> explain
+    ad --> explain
+    ad --> ewa
+
+    subgraph runtimeData["Runtime Data Access"]
+        direction LR
+        prisma["Prisma ORM"]
+        normalizedDb[("Normalized Workforce DB<br/>People, Skills, Availability,<br/>Allocations, Bench, Opportunities,<br/>EWARequests, Recommendations")]
+    end
+
+    availability --> prisma
+    capacity --> prisma
+    forecast --> prisma
+    skills --> prisma
+    scoring --> prisma
+    teamBuild --> prisma
+    risk --> prisma
+    explain --> prisma
+    ewa --> prisma
+    prisma --> normalizedDb
+    normalizedDb -.-> runtimeNote
+
+    subgraph ingestion["Offline Ingestion Path"]
+        direction LR
+        excel["Excel workbook"]
+        importScripts["xlsx import and normalization scripts"]
+        rawTables[("Raw tables<br/>raw_people, raw_skills,<br/>raw_allocations, raw_opportunities")]
+    end
+
+    excel --> importScripts --> rawTables --> normalizedDb
+
+    executionPolicy -.->|availability or filter changes| rs
+    executionPolicy -.->|explanation-only follow-up| ri
+    executionPolicy -.->|opportunity edits| oa
+
+    classDef actor fill:#fff7e6,stroke:#c57a00,color:#2b1d00,stroke-width:1px;
+    classDef frontend fill:#eef5ff,stroke:#356ae6,color:#10213a,stroke-width:1px;
+    classDef control fill:#f4f0ff,stroke:#7b61c9,color:#22173a,stroke-width:1px;
+    classDef agent fill:#e8fbf3,stroke:#178a5d,color:#0f2f20,stroke-width:1px;
+    classDef tool fill:#fff4e8,stroke:#c96b20,color:#402100,stroke-width:1px;
+    classDef data fill:#f2f4f7,stroke:#667085,color:#1d2939,stroke-width:1px;
+    classDef memoryNode fill:#fff8d6,stroke:#b58b00,color:#3a2e00,stroke-width:1px;
+    classDef note fill:#fafafa,stroke:#98a2b3,color:#344054,stroke-width:1px;
+
+    class planner actor;
+    class workspace,response frontend;
+    class api,contextAsm,memoryLookup,changeDetector,executionPolicy,orchestrator,memoryUpdate control;
+    class oa,rs,tb,ri,ad agent;
+    class availability,capacity,forecast,skills,scoring,teamBuild,risk,explain,ewa tool;
+    class prisma,normalizedDb,excel,importScripts,rawTables data;
+    class sessionStore,agentStore,runStore memoryNode;
+    class runtimeNote note;

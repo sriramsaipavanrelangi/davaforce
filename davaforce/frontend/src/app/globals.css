@@ -1,0 +1,503 @@
+@import "tailwindcss" source(none);
+@source "../";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-LightItalic.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-MediumItalic.ttf") format("truetype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-MediumBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Dava Sans";
+  src: url("../../assets/fonts/DavaSans-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/*
+ * DavaForce Design System
+ * Brand palette: Red Orange #FF5640, Solid Blue #192B37, Pure White.
+ * Solid Blue shades drive hierarchy; Red Orange is used sparingly as accent.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-positive: var(--positive);
+  --color-positive-foreground: var(--positive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-negative: var(--negative);
+  --color-negative-foreground: var(--negative-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --font-sans: var(--font-endava);
+  --font-display: var(--font-endava);
+}
+
+:root {
+  color-scheme: light;
+  --radius: 0.5rem;
+  --font-endava: "Dava Sans", system-ui, sans-serif;
+  --font-sans: var(--font-endava);
+  --font-display: var(--font-endava);
+
+  /* Brand */
+  --brand: #FF5640;            /* Endava Red Orange — accent only */
+  --brand-foreground: #FFFFFF;
+  --ink: #192B37;              /* Solid Blue — primary text/surface */
+
+  --home-bg: #F7F9FB;
+  --home-text: #192B37;
+  --home-muted: rgba(25,43,55,0.66);
+  --home-soft: rgba(25,43,55,0.035);
+  --home-panel: rgba(255,255,255,0.86);
+  --home-panel-strong: #FFFFFF;
+  --home-border: rgba(25,43,55,0.16);
+  --home-border-strong: rgba(255,86,64,0.42);
+  --selection-bg: #e3321b70;
+  --selection-fg: #192B37;
+
+  /* Surfaces */
+  --background: #FFFFFF;
+  --foreground: #192B37;
+  --surface: #FFFFFF;
+  --surface-muted: #F4F6F7;    /* Solid Blue 5% feel */
+  --card: #FFFFFF;
+  --card-foreground: #192B37;
+  --popover: #FFFFFF;
+  --popover-foreground: #192B37;
+
+  /* Primary action = Solid Blue (per Endava text/UI guidance) */
+  --primary: #192B37;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #E8EAEB;        /* Solid Blue 10% */
+  --secondary-foreground: #192B37;
+
+  --muted: #E8EAEB;
+  --muted-foreground: #5E6A73; /* Solid Blue 70% */
+
+  --accent: #FFEEEA;           /* Red Orange tint */
+  --accent-foreground: #C73A24;
+
+  --destructive: #D4403B;
+  --destructive-foreground: #FFFFFF;
+
+  --positive: #2D9C5B;
+  --positive-foreground: #FFFFFF;
+  --warning: #EB9410;
+  --warning-foreground: #192B37;
+  --negative: #D4403B;
+  --negative-foreground: #FFFFFF;
+
+  --border: #D1D5D7;           /* Solid Blue 20% */
+  --input: #D1D5D7;
+  --ring: #FF5640;
+
+  /* Data Viz — Endava data palette */
+  --chart-1: #5899C4;
+  --chart-2: #FF5641;
+  --chart-3: #CF820E;
+  --chart-4: #30A661;
+  --chart-5: #8684BF;
+
+  /* Sidebar — Solid Blue background, white text */
+  --sidebar: rgba(255,255,255,0.88);
+  --sidebar-foreground: #192B37;
+  --sidebar-primary: #FF5640;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(25,43,55,0.055);
+  --sidebar-accent-foreground: #192B37;
+  --sidebar-border: rgba(25,43,55,0.12);
+  --sidebar-ring: #FF5640;
+}
+
+.dark {
+  color-scheme: dark;
+  --home-bg: #192B37;
+  --home-text: #FFFFFF;
+  --home-muted: rgba(255,255,255,0.64);
+  --home-soft: #223340;
+  --home-panel: #243744;
+  --home-panel-strong: #0F1D26;
+  --home-border: rgba(255,255,255,0.15);
+  --home-border-strong: rgba(255,86,64,0.34);
+  --selection-bg: rgba(255, 132, 38, 0.52);
+  --selection-fg: #FFFFFF;
+
+  --background: #192B37;
+  --foreground: #FFFFFF;
+  --surface: #30404B;
+  --surface-muted: #47555F;
+  --card: #30404B;
+  --card-foreground: #FFFFFF;
+  --popover: #30404B;
+  --popover-foreground: #FFFFFF;
+  --primary: #FF5640;
+  --primary-foreground: #FFFFFF;
+  --secondary: #47555F;
+  --secondary-foreground: #FFFFFF;
+  --muted: #30404B;
+  --muted-foreground: #BABFC3;
+  --accent: #47555F;
+  --accent-foreground: #FFFFFF;
+  --destructive: #E84641;
+  --destructive-foreground: #FFFFFF;
+  --positive: #3DD17B;
+  --warning: #F99C11;
+  --negative: #E84641;
+  --border: #47555F;
+  --input: #47555F;
+  --ring: #FF5640;
+  --sidebar: rgba(36,55,68,0.92);
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #FF5640;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(255,255,255,0.075);
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255,255,255,0.12);
+  --sidebar-ring: #FF5640;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  :root.theme-switching,
+  :root.theme-switching *,
+  :root.theme-switching *::before,
+  :root.theme-switching *::after {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow, outline-color, text-decoration-color;
+    transition-duration: 280ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-endava);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-endava);
+    letter-spacing: -0.015em;
+  }
+
+  ::selection {
+    background: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+
+  ::-moz-selection {
+    background: var(--selection-bg);
+    color: var(--selection-fg);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@property --glow-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+.moving-glow-border {
+  --glow-angle: 0deg;
+  position: relative;
+  padding: 2px;
+  background: transparent;
+  isolation: isolate;
+}
+
+.moving-glow-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background:
+    conic-gradient(
+      from var(--glow-angle),
+      rgba(255, 86, 64, 0.08),
+      rgba(255, 86, 64, 0.95),
+      rgba(255, 184, 90, 0.75),
+      rgba(255, 86, 64, 0.12),
+      rgba(255, 86, 64, 0.08)
+    );
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.moving-glow-border > * {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-hide-app-footer="true"] .app-footer {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+}
+
+.hero-letter-glow {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+
+.hero-letter-glow__measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  visibility: hidden;
+  white-space: pre;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-letter-glow__content {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  -webkit-text-stroke: 0.55px rgba(255, 217, 170, 0.34);
+  text-shadow:
+    0 0 10px rgba(255, 200, 136, 0.18),
+    0 0 24px rgba(255, 162, 68, 0.12);
+}
+
+.hero-letter-glow__svg {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hero-letter-glow__outline-base {
+  stroke-width: 1.45px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+  opacity: 0.92;
+}
+
+.hero-letter-glow__outline-halo {
+  stroke-width: 4.6px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.98;
+  mix-blend-mode: screen;
+}
+
+.hero-letter-glow__outline-trace {
+  stroke-width: 2.05px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px rgba(255, 208, 142, 0.95)) drop-shadow(0 0 18px rgba(255, 166, 74, 0.9));
+}
+
+.smooth-chat-scroll {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 86, 64, 0.45) transparent;
+}
+
+.smooth-chat-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.smooth-chat-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.smooth-chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 86, 64, 0.42);
+  border-radius: 999px;
+}
+
+.smooth-chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 86, 64, 0.65);
+}
+
+@keyframes landing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes landing-scale {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes success-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.landing-stage {
+  will-change: opacity, transform, filter;
+}
+
+.landing-stage-rise {
+  animation: landing-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-stage-scale {
+  animation: landing-scale 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.landing-stage-success {
+  animation: landing-rise 420ms ease-out both;
+}
+
+.success-tick {
+  animation: success-pop 620ms cubic-bezier(0.2, 1.2, 0.25, 1) both;
+}
